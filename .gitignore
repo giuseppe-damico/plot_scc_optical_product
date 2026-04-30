@@ -1,10 +1,46 @@
+idea/
+
 # Python-generated files
 __pycache__/
 *.py[oc]
 build/
 dist/
 wheels/
-*.egg-info
+*$py.class
 
-# Virtual environments
-.venv
+# --------------------------------------------------
+# Ambienti virtuali
+# --------------------------------------------------
+venv/
+.venv/
+env/
+ENV/
+
+# --------------------------------------------------
+# Build / packaging
+# --------------------------------------------------
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# --------------------------------------------------
+# Test, coverage, tooling
+# --------------------------------------------------
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.pytest_cache/
+
+# --------------------------------------------------
+# Log e file temporanei
+# --------------------------------------------------
+*.log
+*.tmp
+*.swp
+*.swo
+*~
+
+
