@@ -1,0 +1,43 @@
+[project]
+name = "plot-optical-scc-product"
+version = "0.1.0"
+description = "Plot SCC optical Products (ELDA and ELDAmwl)"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "matplotlib>=3.10.9",
+    "netcdf4>=1.7.4",
+    "numpy>=2.4.4",
+]
+authors = [
+    { name = "Giuseppe D'Amico", email = "giuseppe.damico@cnr.it" }
+]
+
+
+[project.scripts]
+eldamwl_elda_plot = "eldamwl_elda_plot"
+
+# --------------------------------------------------
+# Tooling
+# --------------------------------------------------
+
+[tool.uv]
+dev-dependencies = [
+    "pyinstaller",
+]
+
+# --------------------------------------------------
+# PyInstaller configuration
+# --------------------------------------------------
+
+[tool.pyinstaller]
+# Binary name
+name = "eldamwl_elda_plot"
+
+# Entry point
+entry-point = "eldamwl_elda_plot.py"
+
+# Build options
+onefile = false
+console = true
+
