@@ -1,5 +1,5 @@
 [project]
-name = "plot-optical-scc-product"
+name = "plot-scc-optical-product"
 version = "0.1.0"
 description = "Plot SCC optical Products (ELDA and ELDAmwl)"
 readme = "README.md"
@@ -13,31 +13,22 @@ authors = [
     { name = "Giuseppe D'Amico", email = "giuseppe.damico@cnr.it" }
 ]
 
-
-[project.scripts]
-eldamwl_elda_plot = "eldamwl_elda_plot"
-
-# --------------------------------------------------
-# Tooling
-# --------------------------------------------------
-
-[tool.uv]
-dev-dependencies = [
-    "pyinstaller",
+[tool.setuptools]
+py-modules = [
+    "eldamwl",
+    "elda",
+    "eldamwl_elda_plot",
+    "eldamwl_elda_plot_cli",
 ]
 
-# --------------------------------------------------
-# PyInstaller configuration
-# --------------------------------------------------
 
-[tool.pyinstaller]
-# Binary name
-name = "eldamwl_elda_plot"
 
-# Entry point
-entry-point = "eldamwl_elda_plot.py"
+[project.scripts]
+eldamwl_elda_plot = "eldamwl_elda_plot_cli:main"
 
-# Build options
-onefile = false
-console = true
+[tool.uv]
+package = true
 
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
