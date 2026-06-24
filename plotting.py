@@ -2,15 +2,19 @@ import matplotlib.pyplot as plt
 from eldamwl import Eldamwl, set_profile_color
 from elda import Elda
 
-def make_plots(ew, ee):
+def make_plots(ew, ee, filename=None):
     # Generate plot
     n_raw = 2
     n_col = 3
     fig, ax = plt.subplots(n_raw, n_col, squeeze=False)
-    title = "ELDAmwl (" + ew._ga_measurement_ID + ") ELDA ("
-    for i in range(len(ee)):
-        title += ee[i]._ga_measurement_ID + " "
-    title += ")"
+
+    unique_measids = sorted(list(set(obj._ga_measurement_ID for obj in ee)))
+    # Join using ";" as separator
+    mid = ";".join(unique_measids)
+    title = "ELDAmwl (" + ew._ga_measurement_ID + ") ELDA ("+mid+")"
+    # for i in range(len(ee)):
+    #     title += ee[i]._ga_measurement_ID + " "
+    #title += ")"
     fig.suptitle(title)
 
     # Low resolution backscatter plot
@@ -265,13 +269,14 @@ def make_plots(ew, ee):
     else:
         ax[1,2].axis("off")
 
-    #fig.text(
-    #    0.5,
-    #    0.02,
-    #    "Filename: " + ew.filename,
-    #    ha="center",
-    #    va="bottom",
-    #    fontsize=8
-    #)
     plt.tight_layout(pad=0.3, h_pad=0.1, w_pad=0.1)
-    plt.show()
+
+    if filename:
+        plt.savefig(
+            filename,
+            dpi=300,
+            bbox_inches='tight',
+            transparent=False
+        )
+    else:
+        plt.show()

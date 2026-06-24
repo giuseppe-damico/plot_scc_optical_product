@@ -7,8 +7,22 @@ import argparse
 from plotting import make_plots
 
 parser=argparse.ArgumentParser(description="Plot SCC Optical Products")
-parser.add_argument("-i", "--eldamwl", required=True, help="Path to the ELDAmwl file to plot")
-parser.add_argument("-e", "--elda", required=True, help="Path to the directory containing ELDA files to plot")
+parser.add_argument(
+    "-i", "--eldamwl",
+    required=True,
+    help="Path to the ELDAmwl file to plot"
+)
+parser.add_argument(
+    "-e", "--elda",
+    required=True,
+    help="Path to the directory containing ELDA files to plot"
+)
+parser.add_argument(
+    '-o', '--filename',
+    type=str,
+    default=None,
+    help='Output PNG filename for the plot (default: None)'
+)
 args=parser.parse_args()
 
 # Open ELDAmwl file
@@ -25,4 +39,4 @@ for ff in glob.glob(elda_pattern):
     ee.append(buffer)
 
 # Generate plot
-make_plots(ew, ee)
+make_plots(ew, ee, args.filename)
