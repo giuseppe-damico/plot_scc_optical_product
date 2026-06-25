@@ -19,6 +19,7 @@ py-modules = [
     "elda",
     "eldamwl_elda_plot",
     "eldamwl_elda_plot_cli",
+    "plotting",
 ]
 
 
