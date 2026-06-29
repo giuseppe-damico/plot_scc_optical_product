@@ -6,6 +6,9 @@ import matplotlib.pyplot as plt
 from itertools import cycle
 import os
 
+from plotting import set_profile_color_type
+
+
 # def set_profile_color(wave):
 #    wave_int = int(wave)
 #    if wave_int == 1064:
@@ -349,7 +352,7 @@ class Eldamwl:
                         label_txt = str(wave)
                     else:
                         label_txt=str(wave)+ " t=" + str(t)
-                    ax[0, 0].errorbar(x, y, xerr=x_err, color=set_profile_color(wave), ls=lss, label=label_txt )
+                    ax[0, 0].errorbar(x, y, xerr=x_err, color=set_profile_color_type(wave, 'eldamwl'), ls=lss, label=label_txt )
                     #ax[0,0].plot(x, y, color=set_profile_color(wave), ls=lss, label=label_txt)
                     ax[0,0].set_ylabel("Height [km]")
                     ax[0,0].set_xlabel("Backscatter [Mm$^{-1}$sr$^{-1}$]")
@@ -373,7 +376,7 @@ class Eldamwl:
                         label_txt = str(wave)
                     else:
                         label_txt=str(wave)+ " t=" + str(t)
-                    ax[0, 1].errorbar(x, y, xerr=x_err, color=set_profile_color(wave), ls=lss, label=label_txt)
+                    ax[0, 1].errorbar(x, y, xerr=x_err, color=set_profile_color_type(wave, 'eldamwl'), ls=lss, label=label_txt)
                     #ax[0,1].plot(x, y, color=set_profile_color(wave), ls=lss, label=label_txt)
                     ax[0,1].set_xlabel("Depolarization")
                     if not legend_plotted:
@@ -399,7 +402,7 @@ class Eldamwl:
                         label_txt = str(wave)
                     else:
                         label_txt=str(wave)+ " t=" + str(t)
-                    ax[0,2].errorbar(x, y, xerr=x_err, color=set_profile_color(wave), ls=lss, label=label_txt)
+                    ax[0,2].errorbar(x, y, xerr=x_err, color=set_profile_color_type(wave, 'eldamwl'), ls=lss, label=label_txt)
                     #ax[0,2].plot(x, y, color=set_profile_color(wave), ls=lss, label=label_txt)
                     ax[0,2].set_xlabel("Extinction [Mm$^{-1}$]")
                     if not legend_plotted:
@@ -423,7 +426,7 @@ class Eldamwl:
                         label_txt = str(wave)
                     else:
                         label_txt = str(wave) + " t=" + str(t)
-                    ax[1, 0].errorbar(x, y, xerr=x_err, color=set_profile_color(wave), ls=lss, label=label_txt)
+                    ax[1, 0].errorbar(x, y, xerr=x_err, color=set_profile_color_type(wave, 'eldamwl'), ls=lss, label=label_txt)
                     # ax[0,0].plot(x, y, color=set_profile_color(wave), ls=lss, label=label_txt)
                     ax[1, 0].set_ylabel("Height [km]")
                     ax[1, 0].set_xlabel("Backscatter [Mm$^{-1}$sr$^{-1}$]")
@@ -447,7 +450,7 @@ class Eldamwl:
                         label_txt = str(wave)
                     else:
                         label_txt = str(wave) + " t=" + str(t)
-                    ax[1, 1].errorbar(x, y, xerr=x_err, color=set_profile_color(wave), ls=lss, label=label_txt)
+                    ax[1, 1].errorbar(x, y, xerr=x_err, color=set_profile_color_type(wave, 'eldamwl'), ls=lss, label=label_txt)
                     # ax[0,1].plot(x, y, color=set_profile_color(wave), ls=lss, label=label_txt)
                     ax[1, 1].set_xlabel("Depolarization")
                     if not legend_plotted:
@@ -472,7 +475,7 @@ class Eldamwl:
                         label_txt = str(wave)
                     else:
                         label_txt = str(wave) + " t=" + str(t)
-                    ax[1, 2].errorbar(x, y, xerr=x_err, color=set_profile_color(wave), ls=lss, label=label_txt)
+                    ax[1, 2].errorbar(x, y, xerr=x_err, color=set_profile_color_type(wave, 'eldamwl'), ls=lss, label=label_txt)
                     # ax[0,2].plot(x, y, color=set_profile_color(wave), ls=lss, label=label_txt)
                     ax[1, 2].set_xlabel("Extinction [Mm$^{-1}$]")
                     if not legend_plotted:
