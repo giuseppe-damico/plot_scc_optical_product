@@ -1,5 +1,5 @@
 import numpy as np
-from eldamwl import Eldamwl, set_profile_color
+from eldamwl import Eldamwl#, set_profile_color
 from elda import Elda
 import glob
 import matplotlib.pyplot as plt

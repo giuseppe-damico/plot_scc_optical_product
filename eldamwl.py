@@ -6,15 +6,15 @@ import matplotlib.pyplot as plt
 from itertools import cycle
 import os
 
-def set_profile_color(wave):
-    wave_int = int(wave)
-    if wave_int == 1064:
-        color = 'red'
-    elif wave_int == 532:
-        color = 'green'
-    else:
-        color = 'blue'
-    return color
+# def set_profile_color(wave):
+#    wave_int = int(wave)
+#    if wave_int == 1064:
+#        color = 'red'
+#    elif wave_int == 532:
+#        color = 'green'
+#    else:
+#        color = 'blue'
+#    return color
 
 def merge_two_string_arrays(str1, str2):
     merged = np.array(
