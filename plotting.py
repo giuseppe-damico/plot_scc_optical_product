@@ -1,8 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from eldamwl import Eldamwl #, set_profile_color
-from elda import Elda
 
 def set_profile_color_type(wave, profile_type):
     wave_int = int(wave)
@@ -34,7 +32,7 @@ def make_plots(ew, ee, filename=None):
     # Generate plot
     n_raw = 2
     n_col = 3
-    fig, ax = plt.subplots(n_raw, n_col, figsize=(16,10), squeeze=False) #, constrained_layout=True)
+    fig, ax = plt.subplots(n_raw, n_col, figsize=(16,10), squeeze=False, sharey=True)
 
     fig.tight_layout(rect=[0, 0, 1, 0.95], pad=1.5, h_pad=1.5, w_pad=1.2)
 
@@ -347,6 +345,10 @@ def make_plots(ew, ee, filename=None):
         ax[1, 2].grid(True)
     else:
         ax[1,2].axis("off")
+
+    for i in range(n_raw):
+        for j in range(n_col):
+            ax[i, j].tick_params(labelleft=True)
 
     if filename:
         plt.rcParams.update({
