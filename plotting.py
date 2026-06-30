@@ -368,4 +368,5 @@ def make_plots(ew, ee, filename=None):
             transparent=False
         )
     else:
+        plt.tight_layout()
         plt.show()
