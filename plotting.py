@@ -361,12 +361,23 @@ def make_plots(ew, ee, filename=None):
 
         fig.tight_layout(pad=0.8, h_pad=0.5, w_pad=0.5)
 
-        plt.savefig(
-            filename,
-            dpi=300,
-            bbox_inches='tight',
-            transparent=False
-        )
+        try:
+            plt.savefig(
+                filename,
+                dpi=300,
+                bbox_inches='tight',
+                transparent=False
+            )
+        except FileNotFoundError:
+            print(f"Cannot write '{filename}'. The given path does not exist!")
+            sys.exit(1)
+        except PermissionError:
+            print(f"Cannot write '{filename}'. Missing write premissions.")
+            sys.exit(1)
+        except Exception as e:
+            print(f"Cannot save plot. Error: {e}")
+            sys.exit(1)
+
     else:
         plt.tight_layout()
         plt.show()

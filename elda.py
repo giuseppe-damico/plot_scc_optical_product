@@ -1,3 +1,4 @@
+import sys
 from dataclasses import dataclass, field, fields
 import netCDF4 as nc
 import numpy as np
@@ -100,38 +101,48 @@ class Elda:
 
     def from_netcdf(self,file_name):
         self.filename = os.path.basename(file_name)
-        with nc.Dataset(file_name, 'r') as ds:
-            for f in fields(self):
-                # Getting global attributes
-                # Getting all the dataclass members whose name starts with "_ga_"
-                if f.name.startswith("_ga_"):
-                    member_name = f.name
-                    member_type = f.type
-                    attribute_name=member_name.replace("_ga_", "")
-                    if attribute_name in ds.ncattrs():
-                        # Read the attribute value
-                        setattr(self, member_name, member_type(ds.getncattr(attribute_name)))
-                    else:
-                        print(f"Attribute '{attribute_name}' not found in the NetCDF file {file_name}.")
+        try:
+            with nc.Dataset(file_name, 'r') as ds:
+                for f in fields(self):
+                    # Getting global attributes
+                    # Getting all the dataclass members whose name starts with "_ga_"
+                    if f.name.startswith("_ga_"):
+                        member_name = f.name
+                        member_type = f.type
+                        attribute_name=member_name.replace("_ga_", "")
+                        if attribute_name in ds.ncattrs():
+                            # Read the attribute value
+                            setattr(self, member_name, member_type(ds.getncattr(attribute_name)))
+                        else:
+                            print(f"Attribute '{attribute_name}' not found in the NetCDF file {file_name}.")
 
-                # Getting variables
-                # Getting all the dataclass members whose name starts with "_va_"
-                elif f.name.startswith("_va_"):
-                    member_name = f.name
-                    #member_type = f.type
-                    variable_name = member_name.replace("_va_", "")
-                    #print("VARIABLE: ", variable_name)
-                    is_variable_present = False
-                    for var_name, var in ds.variables.items():
-                        if var_name == variable_name:
-                            is_variable_present=True
-                            fill_value = getattr(var, "_FillValue", None)
-                            buffer=var[:]
-                            if fill_value is not None:
-                                buffer = np.ma.masked_equal(buffer, fill_value)
-                            setattr(self, member_name, buffer)
-                    if not is_variable_present:
-                        print(f"Variable '{variable_name}' not found in the NetCDF file {file_name}.")
+                    # Getting variables
+                    # Getting all the dataclass members whose name starts with "_va_"
+                    elif f.name.startswith("_va_"):
+                        member_name = f.name
+                        #member_type = f.type
+                        variable_name = member_name.replace("_va_", "")
+                        #print("VARIABLE: ", variable_name)
+                        is_variable_present = False
+                        for var_name, var in ds.variables.items():
+                            if var_name == variable_name:
+                                is_variable_present=True
+                                fill_value = getattr(var, "_FillValue", None)
+                                buffer=var[:]
+                                if fill_value is not None:
+                                    buffer = np.ma.masked_equal(buffer, fill_value)
+                                setattr(self, member_name, buffer)
+                        if not is_variable_present:
+                            print(f"Variable '{variable_name}' not found in the NetCDF file {file_name}.")
+        except FileNotFoundError:
+            print(f"The file '{file_name}' does not exist!")
+            sys.exit(1)
+        except OSError as e:
+            print(f"Error in reading NetCDF file: {e}")
+            sys.exit(1)
+        except Exception as e:
+            print(f"Unknown error in reading NetCDF file: {e}")
+            sys.exit(1)
 
     def plot(self):
         is_ext_included = 0

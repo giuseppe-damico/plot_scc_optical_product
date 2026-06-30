@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from itertools import cycle
 import os
 from plotting import set_profile_color_type
+import sys
 
 
 def set_profile_color(wave):
@@ -215,85 +216,96 @@ class Eldamwl:
 
     def from_netcdf(self,file_name):
         self.filename = os.path.basename(file_name)
-        with nc.Dataset(file_name, 'r') as ds:
-            for f in fields(self):
-                # Getting global attributes
-                # Getting all the dataclass members whose name starts with "_ga_"
-                if f.name.startswith("_ga_"):
-                    member_name = f.name
-                    member_type = f.type
-                    attribute_name=member_name.replace("_ga_", "")
-                    if attribute_name in ds.ncattrs():
-                        # Read the attribute value
-                        setattr(self, member_name, member_type(ds.getncattr(attribute_name)))
-                    else:
-                        print(f"Attribute '{attribute_name}' not found in the NetCDF file {file_name}.")
+        try:
+            with nc.Dataset(file_name, 'r') as ds:
+                for f in fields(self):
+                    # Getting global attributes
+                    # Getting all the dataclass members whose name starts with "_ga_"
+                    if f.name.startswith("_ga_"):
+                        member_name = f.name
+                        member_type = f.type
+                        attribute_name=member_name.replace("_ga_", "")
+                        if attribute_name in ds.ncattrs():
+                            # Read the attribute value
+                            setattr(self, member_name, member_type(ds.getncattr(attribute_name)))
+                        else:
+                            print(f"Attribute '{attribute_name}' not found in the NetCDF file {file_name}.")
 
-                # Getting variables
-                # Getting all the dataclass members whose name starts with "_va_"
-                elif f.name.startswith("_va_"):
-                    member_name = f.name
-                    #member_type = f.type
-                    variable_name = member_name.replace("_va_", "")
-                    #print("VARIABLE: ", variable_name)
-                    is_variable_present = False
-                    for var_name, var in ds.variables.items():
-                        if var_name == variable_name:
-                            is_variable_present=True
-                            fill_value = getattr(var, "_FillValue", None)
-                            buffer=var[:]
-                            if fill_value is not None:
-                                buffer = np.ma.masked_equal(buffer, fill_value)
-                            setattr(self, member_name, buffer)
-                    if not is_variable_present:
-                        print(f"Variable '{variable_name}' not found in the NetCDF file {file_name}.")
+                    # Getting variables
+                    # Getting all the dataclass members whose name starts with "_va_"
+                    elif f.name.startswith("_va_"):
+                        member_name = f.name
+                        #member_type = f.type
+                        variable_name = member_name.replace("_va_", "")
+                        #print("VARIABLE: ", variable_name)
+                        is_variable_present = False
+                        for var_name, var in ds.variables.items():
+                            if var_name == variable_name:
+                                is_variable_present=True
+                                fill_value = getattr(var, "_FillValue", None)
+                                buffer=var[:]
+                                if fill_value is not None:
+                                    buffer = np.ma.masked_equal(buffer, fill_value)
+                                setattr(self, member_name, buffer)
+                        if not is_variable_present:
+                            print(f"Variable '{variable_name}' not found in the NetCDF file {file_name}.")
 
-                # Getting groups
-                # Getting all the dataclass members whose name starts with "_gr_"
-                elif f.name.startswith("_gr_"):
-                    member_name = f.name
-                    #member_type = f.type
-                    group_name = member_name.replace("_gr_", "")
-                    #print("GROUP=", group_name)
-                    value = getattr(self, f.name)
-                    value.from_netcdf_dataset(ds, group_name)
+                    # Getting groups
+                    # Getting all the dataclass members whose name starts with "_gr_"
+                    elif f.name.startswith("_gr_"):
+                        member_name = f.name
+                        #member_type = f.type
+                        group_name = member_name.replace("_gr_", "")
+                        #print("GROUP=", group_name)
+                        value = getattr(self, f.name)
+                        value.from_netcdf_dataset(ds, group_name)
 
-            # Getting Metadata
-            # Backscatter Metadata
-            str1=self._gr_lowres_products._va_backscatter_meta_data.ravel()
-            str2=self._gr_highres_products._va_backscatter_meta_data.ravel()
-            for md in merge_two_string_arrays(str1, str2):
-                dc=EldamwlMetaDataBackscatter()
-                dc.name=md
-                get_group_data_from_netcdf_dataset(dc, ds, md)
-                self._gr_meta_data._md_backscatter_meta_data.append(dc)
+                # Getting Metadata
+                # Backscatter Metadata
+                str1=self._gr_lowres_products._va_backscatter_meta_data.ravel()
+                str2=self._gr_highres_products._va_backscatter_meta_data.ravel()
+                for md in merge_two_string_arrays(str1, str2):
+                    dc=EldamwlMetaDataBackscatter()
+                    dc.name=md
+                    get_group_data_from_netcdf_dataset(dc, ds, md)
+                    self._gr_meta_data._md_backscatter_meta_data.append(dc)
 
-            # Extinction Metadata
-            str1 = self._gr_lowres_products._va_extinction_meta_data.ravel()
-            str2 = self._gr_highres_products._va_extinction_meta_data.ravel()
-            for md in merge_two_string_arrays(str1, str2):
-                dc = EldamwlMetaDataExtinction()
-                dc.name = md
-                get_group_data_from_netcdf_dataset(dc, ds, md)
-                self._gr_meta_data._md_extinction_meta_data.append(dc)
+                # Extinction Metadata
+                str1 = self._gr_lowres_products._va_extinction_meta_data.ravel()
+                str2 = self._gr_highres_products._va_extinction_meta_data.ravel()
+                for md in merge_two_string_arrays(str1, str2):
+                    dc = EldamwlMetaDataExtinction()
+                    dc.name = md
+                    get_group_data_from_netcdf_dataset(dc, ds, md)
+                    self._gr_meta_data._md_extinction_meta_data.append(dc)
 
-            # VolumeDepolarization Metadata
-            str1 = self._gr_lowres_products._va_volumedepolarization_meta_data.ravel()
-            str2 = self._gr_highres_products._va_volumedepolarization_meta_data.ravel()
-            for md in merge_two_string_arrays(str1, str2):
-                dc = EldamwlMetaDataVolumeDepolarization()
-                dc.name = md
-                get_group_data_from_netcdf_dataset(dc, ds, md)
-                self._gr_meta_data._md_volumedepolarization_meta_data.append(dc)
+                # VolumeDepolarization Metadata
+                str1 = self._gr_lowres_products._va_volumedepolarization_meta_data.ravel()
+                str2 = self._gr_highres_products._va_volumedepolarization_meta_data.ravel()
+                for md in merge_two_string_arrays(str1, str2):
+                    dc = EldamwlMetaDataVolumeDepolarization()
+                    dc.name = md
+                    get_group_data_from_netcdf_dataset(dc, ds, md)
+                    self._gr_meta_data._md_volumedepolarization_meta_data.append(dc)
 
-            # LidarRatio Metadata
-            str1 = self._gr_lowres_products._va_lidarratio_meta_data.ravel()
-            str2 = self._gr_highres_products._va_lidarratio_meta_data.ravel()
-            for md in merge_two_string_arrays(str1, str2):
-                dc = EldamwlMetaDataLidarRatio()
-                dc.name = md
-                get_group_data_from_netcdf_dataset(dc, ds, md)
-                self._gr_meta_data._md_lidarratio_meta_data.append(dc)
+                # LidarRatio Metadata
+                str1 = self._gr_lowres_products._va_lidarratio_meta_data.ravel()
+                str2 = self._gr_highres_products._va_lidarratio_meta_data.ravel()
+                for md in merge_two_string_arrays(str1, str2):
+                    dc = EldamwlMetaDataLidarRatio()
+                    dc.name = md
+                    get_group_data_from_netcdf_dataset(dc, ds, md)
+                    self._gr_meta_data._md_lidarratio_meta_data.append(dc)
+
+        except FileNotFoundError:
+            print(f"The file '{file_name}' does not exist!")
+            sys.exit(1)
+        except OSError as e:
+            print(f"Error in reading NetCDF file: {e}")
+            sys.exit(1)
+        except Exception as e:
+            print(f"Unknown error in reading NetCDF file: {e}")
+            sys.exit(1)
 
     def plot(self):
         is_highres_included=0
